@@ -87,6 +87,7 @@
 // Teensy 2.0
 //#define OSC_MHZ_16
 //#define USB_REGULATOR
+//#define USE_LED
 //#define LED_DDR_REG    DDRD
 //#define LED_PORT_REG   PORTD
 //#define LED_IONUM      6
