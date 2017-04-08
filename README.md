@@ -9,7 +9,8 @@ ubaboot v0.5 is a USB bootloader for atmega32u4 in 512 bytes.
   and [Teensy 2.0](https://www.pjrc.com/store/teensy.html)
 * Can write and read (verify) both flash and eeprom memory
 * Also reads signature/lock/fuse bytes
-* Sample pyusb driver program included
+* Sample [pyusb](https://walac.github.io/pyusb/) driver program included
+* Works with Linux; other platforms may work but not tested
 
 ubaboot uses a custom (vendor-defined) USB protocol. See below for details.
 
@@ -19,11 +20,20 @@ The included `ubaboot.py` driver program can upload and verify firmware.
 
 You must configure ubaboot to work with your board. See `config.h`.
 
-1.  Edit `config.h` to setup required and optional configuration.
+1.  Install dependencies:
+    *  avr-gcc
+    *  avr-libc
+    *  make
+    *  avrdude
+    *  pyusb
+1.  Edit `config.h` to set required and optional configuration.
 1.  Build via `make`.
 1.  Set your fuses for a 512 byte bootloader.
 1.  Program your board via "make program". This uses `avrdude` to flash the
     firmware; set `AVRDUDE_PROGRAMMER` in the `Makefile` for your programmer.
+1.  Install a [udev
+    rule](https://github.com/libusb/libusb/wiki/FAQ#can-i-run-libusb-applications-on-linux-without-root-privilege)
+    so you can use your device without root privilege.
 1.  Use `ubaboot.py` to load programs via the bootloader.
 
 ### Configuration overview
