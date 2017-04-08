@@ -154,6 +154,10 @@ The firmware allows max 64 kib transfers but your USB stack might not.
 
 libusb on linux is limited to 4 kib per control transfer.
 
+## Thanks
+
+Thank you Richard Woodbury for reviewing lots of code and testing!
+
 ## Copyright notice
 
 Copyright 2017 by Robert Evans (rrevans@gmail.com)
