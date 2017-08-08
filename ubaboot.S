@@ -42,6 +42,7 @@
 ;   - disabling interrupts
 ;   - resetting the USB and PLL registers to reset values
 ;   - setting SPL, SPH to the top of SRAM
+;   - setting MCUSR to zero
 ;   - jumping to the beginning of the bootloader
 ;
 ; Implementation notes:
@@ -240,8 +241,8 @@ start_delay:
 ; Watchdog + external reset triggers the bootloader in case WDTON is set
 ; since the watchdog may fire while the reset button is being held down.
 ;
-; User code can enter the bootloader by triggering any other reset.
-; Or jumping to it with MCUSR = 0
+; User code can enter the bootloader by triggering any other reset,
+; or by following the instructions at the top of this file.
 
 	mov r16, r2
 	; if (mcusr != (_BV(WDRF)|_BV(EXTRF))
