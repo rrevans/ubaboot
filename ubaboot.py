@@ -138,16 +138,16 @@ class UbabootDevice(object):
         return self.__dev_read(UbabootDevice.GET_LOCK, 0, 0, 4)
 
     def read_flash(self, base, length):
-        return self.__read_mem(UbabootDevice.READ_FLASH, base, length)
+        return self.__read_mem(UbabootDevice.READ_FLASH, base, length, 512)
 
     def read_eeprom(self, base, length):
-        return self.__read_mem(UbabootDevice.READ_EEPROM, base, length)
+        return self.__read_mem(UbabootDevice.READ_EEPROM, base, length, 16)
 
     def write_flash(self, base, pgm):
-        return self.__write_mem(UbabootDevice.WRITE_FLASH, base, pgm)
+        return self.__write_mem(UbabootDevice.WRITE_FLASH, base, pgm, 512)
 
     def write_eeprom(self, base, pgm):
-        return self.__write_mem(UbabootDevice.WRITE_EEPROM, base, pgm)
+        return self.__write_mem(UbabootDevice.WRITE_EEPROM, base, pgm, 16)
 
     def reboot(self):
         return self.__dev_write(UbabootDevice.REBOOT, 0, 0, '')
@@ -158,18 +158,18 @@ class UbabootDevice(object):
     def __dev_write(self, *args):
         return self.__dev.ctrl_transfer(UbabootDevice.DEV_WRITE, *args)
 
-    def __read_mem(self, cmd, base, length):
+    def __read_mem(self, cmd, base, length, blksz):
         pgm = bytearray()
-        for offset in xrange(0, length, 512):
+        for offset in xrange(0, length, blksz):
             addr = base + offset
-            nb = min(512, length - offset)
+            nb = min(blksz, length - offset)
             pgm.extend(self.__dev_read(cmd, addr, 0, nb))
         return pgm
 
-    def __write_mem(self, cmd, base, pgm):
-        for offset in xrange(0, len(pgm), 512):
-            block = pgm[offset:offset+512]
-            padding = ((len(block) + 0x7f) & ~0x7f) - len(block)
+    def __write_mem(self, cmd, base, pgm, blksz):
+        for offset in xrange(0, len(pgm), blksz):
+            block = pgm[offset:offset+blksz]
+            padding = ((len(block) + blksz - 1) & ~(blksz-1)) - len(block)
             block += bytearray('\xff') * padding
             self.__dev_write(cmd, base+offset, 0, block)
 
