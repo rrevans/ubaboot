@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2017 by Robert Evans (rrevans@gmail.com)
 #
@@ -81,7 +81,7 @@ class IHexLine(namedtuple('IHexLine', 'addr type data')):
             raise ValueError('missing start byte')
         if len(s) % 2 != 1:
             raise ValueError('expected even number of input chars')
-        b = bytearray(int(s[i:i+2], 16) for i in xrange(1, len(s), 2))
+        b = bytearray(int(s[i:i+2], 16) for i in range(1, len(s), 2))
         if len(b) != b[0] + 5:
             raise ValueError('invalid byte count')
         if sum(b) & 0xff:
@@ -150,7 +150,7 @@ class UbabootDevice(object):
         return self.__write_mem(UbabootDevice.WRITE_EEPROM, base, pgm, 16)
 
     def reboot(self):
-        return self.__dev_write(UbabootDevice.REBOOT, 0, 0, '')
+        return self.__dev_write(UbabootDevice.REBOOT, 0, 0, b'')
 
     def __dev_read(self, *args):
         return self.__dev.ctrl_transfer(UbabootDevice.DEV_READ, *args)
@@ -160,17 +160,17 @@ class UbabootDevice(object):
 
     def __read_mem(self, cmd, base, length, blksz):
         pgm = bytearray()
-        for offset in xrange(0, length, blksz):
+        for offset in range(0, length, blksz):
             addr = base + offset
             nb = min(blksz, length - offset)
             pgm.extend(self.__dev_read(cmd, addr, 0, nb))
         return pgm
 
     def __write_mem(self, cmd, base, pgm, blksz):
-        for offset in xrange(0, len(pgm), blksz):
+        for offset in range(0, len(pgm), blksz):
             block = pgm[offset:offset+blksz]
             padding = ((len(block) + blksz - 1) & ~(blksz-1)) - len(block)
-            block += bytearray('\xff') * padding
+            block += bytearray(b'\xff') * padding
             self.__dev_write(cmd, base+offset, 0, block)
 
 def main():
@@ -188,14 +188,14 @@ def main():
         sig = ubaboot.get_signature()
         lofuse, lock, extfuse, hifuse = bytearray(ubaboot.get_lock())
         fuses = [lofuse, hifuse, extfuse]
-        print 'Signature:', ''.join(to_hex(v) for v in bytearray(sig)), \
+        print('Signature:', ''.join(to_hex(v) for v in bytearray(sig)), \
             'Fuses: L:{0} H:{1} E:{2}'.format(*(to_hex(v) for v in fuses)), \
-            'Lock: {0}'.format(to_hex(lock))
+            'Lock: {0}'.format(to_hex(lock)))
 
     if args.mode in ('verify', 'write'):
         with open(args.file) as f:
             pgm = read_ihex(f)
-        print 'Loaded', len(pgm), 'bytes from', args.file
+        print('Loaded', len(pgm), 'bytes from', args.file)
 
     if args.mode in ('read', 'write', 'verify'):
         if args.type == 'flash':
@@ -207,25 +207,25 @@ def main():
         start = args.start
         count = args.count
         mem = read(start, count)
-        mem = mem.rstrip(bytearray('\xff'))
-        for offset in xrange(0, len(mem), 16):
-            print IHexLine(addr=start+offset, type=0, data=mem[offset:offset+16])
-        print IHexLine(addr=0, type=1, data='')
+        mem = mem.rstrip(bytearray(b'\xff'))
+        for offset in range(0, len(mem), 16):
+            print(IHexLine(addr=start+offset, type=0, data=mem[offset:offset+16]))
+        print(IHexLine(addr=0, type=1, data=''))
 
     if args.mode == 'write':
         write(0, pgm)
-        print 'Wrote', len(pgm), 'bytes OK'
+        print('Wrote', len(pgm), 'bytes OK')
 
     if args.mode in ('verify', 'write'):
         actual = read(0, len(pgm))
-        for pos in xrange(len(pgm)):
+        for pos in range(len(pgm)):
             if actual[pos] != pgm[pos]:
                 raise ValueError('mismatch at offset 0x%x' % (pos,))
-        print 'Verified', len(pgm), 'bytes OK'
+        print('Verified', len(pgm), 'bytes OK')
 
     if args.mode in ('write', 'reboot') and args.reboot:
         ubaboot.reboot()
-        print 'Rebooting'
+        print('Rebooting')
 
 if __name__ == '__main__':
     main()
