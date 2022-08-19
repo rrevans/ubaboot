@@ -20,10 +20,9 @@
 // Modify these to change the configuration to match your hardware.
 //
 // Required configuration:
-//   1. Set USB vendor ID and product ID
-//   2. Choose OSC_MHZ_8 or OSC_MHZ_16 depending on your oscillator
+//   1. Choose OSC_MHZ_8 or OSC_MHZ_16 depending on your oscillator
 //      (not your system clock)
-//   3. Determine whether or not you need the USB regulator enabled
+//   2. Determine whether or not you need the USB regulator enabled
 //      and set USB_REGULATOR if so. See the datasheet.
 //
 // Optional configuration:
@@ -32,19 +31,14 @@
 //      LED_PORT_REG  port register
 //      LED_IONUM     bit number within DDR/PORT registers
 //   2. Set USB low speed mode e.g. if using an RC oscillator.
+//   3. Customize USB vendor ID and product ID
 
 
-// You must provide a USB vendor id and product id.
-// Options if you don't have an allocated vendor id from USB-IF:
-//   1) Pick an id that does not conflict with any devices in your system.
-//   2) Find a friendly vendor who will allocate you a PID.
-//   3) Buy one from USB-IF for a sizable amount of money.
-// References:
-// http://www.usb.org/developers/vendor/
-// https://en.wikipedia.org/wiki/USB_Implementers_Forum#Obtaining_a_vendor_ID
+// USB ID 1d50:611c is assigned to ubaboot by openmoko.
+// You can change the USB vendor id and product id if desired.
 // These should be written as C literals.
-//#define VENDOR_ID 0xnnnn
-//#define PRODUCT_ID 0xnnnn
+#define VENDOR_ID 0x1d50
+#define PRODUCT_ID 0x611c
 
 // Choose which oscillator you are using:
 //
@@ -57,15 +51,15 @@
 // Note: If you are using the RC oscillator, you must use low-speed mode.
 //       See the datasheet for details. To select this mode set OSC_MHZ_8 and
 //       uncomment USB_LOW_SPEED below.
-//#define OSC_MHZ_8
+#define OSC_MHZ_8
 //#define OSC_MHZ_16
 
 // If you want to use USB low speed mode, uncomment the following line.
 // This is required for the RC oscillator.
-//#define USB_LOW_SPEED
+#define USB_LOW_SPEED
 
 // If you need the on-chip USB voltage regulator, uncomment the following line.
-//#define USB_REGULATOR
+#define USB_REGULATOR
 
 // If you would like a status LED, uncomment this line. Also uncomment the
 // appropriate lines for DDRLED, PORTLED, and LEDPIN below.
@@ -91,3 +85,9 @@
 //#define LED_DDR_REG    DDRD
 //#define LED_PORT_REG   PORTD
 //#define LED_IONUM      6
+
+// ab-driver 2.0
+#define USE_LED
+#define LED_DDR_REG    DDRD
+#define LED_PORT_REG   PORTD
+#define LED_IONUM      5

@@ -40,7 +40,6 @@ You must configure ubaboot to work with your board. See `config.h`.
 
 Required configuration:
 
-*   Choose a vendor and product ID.
 *   Set crystal/oscillator frequency for your board.
 *   Set low-speed mode if using the internal RC oscillator.
 *   Enable USB voltage regulator if needed for your board.
@@ -48,11 +47,9 @@ Required configuration:
 Optional configuration:
 
 *   Setup registers and pin number for blinky USB activity LED.
+*   Customize vendor and product ID.
 
 ## Protocol details
-
-**Note:** ubaboot does not come with a USB vendor ID/product ID. You must
-configure one before using ubaboot.
 
 All operations are control transfers type vendor and recipient device.
 
@@ -163,6 +160,11 @@ Offset | Value
 The firmware allows max 64 kib transfers but your USB stack might not.
 
 libusb on linux is limited to 4 kib per control transfer.
+
+USB vendor/product ID 1d50:611c is assigned to ubaboot by
+[openmoko](https://raw.githubusercontent.com/openmoko/openmoko-usb-oui/master/usb_product_ids.psv)
+and configured by default. You can use this ID in your projects, or customize
+if desired.
 
 ## Thanks
 

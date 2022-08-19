@@ -21,8 +21,8 @@ import usb.core
 import argparse
 from collections import namedtuple
 
-# You can set a default value for --dev here as a string, e.g. "xxxx:xxxx".
-DEFAULT_DEV = None
+# Default vendor/product id assigned by openmoko.
+DEFAULT_DEV = '1d50:611c'
 
 def parse_args():
     """Parses command line arguments.
