@@ -51,15 +51,15 @@
 // Note: If you are using the RC oscillator, you must use low-speed mode.
 //       See the datasheet for details. To select this mode set OSC_MHZ_8 and
 //       uncomment USB_LOW_SPEED below.
-#define OSC_MHZ_8
+//#define OSC_MHZ_8
 //#define OSC_MHZ_16
 
 // If you want to use USB low speed mode, uncomment the following line.
 // This is required for the RC oscillator.
-#define USB_LOW_SPEED
+//#define USB_LOW_SPEED
 
 // If you need the on-chip USB voltage regulator, uncomment the following line.
-#define USB_REGULATOR
+//#define USB_REGULATOR
 
 // If you would like a status LED, uncomment this line. Also uncomment the
 // appropriate lines for DDRLED, PORTLED, and LEDPIN below.
@@ -85,9 +85,3 @@
 //#define LED_DDR_REG    DDRD
 //#define LED_PORT_REG   PORTD
 //#define LED_IONUM      6
-
-// ab-driver 2.0
-#define USE_LED
-#define LED_DDR_REG    DDRD
-#define LED_PORT_REG   PORTD
-#define LED_IONUM      5
