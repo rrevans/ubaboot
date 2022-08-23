@@ -34,7 +34,8 @@ You must configure ubaboot to work with your board. See `config.h`.
     firmware; set `AVRDUDE_PROGRAMMER` in the `Makefile` for your programmer.
 6. Install a [udev
     rule](https://github.com/libusb/libusb/wiki/FAQ#can-i-run-libusb-applications-on-linux-without-root-privilege)
-    so you can use your device without root privilege.
+    so you can use your device without root privilege. If you use the default USB device ID, you can just copy the
+    file `99-ubaboot.rules` into `/etc/udev/rules.d`.
 7. Use `ubaboot.py` to load programs via the bootloader.
 
 ### Configuration overview
