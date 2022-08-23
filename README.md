@@ -3,6 +3,7 @@
 ubaboot v0.5 is a USB bootloader for atmega32u4 in 512 bytes.
 
 ## Overview
+
 * Targets atmega32u4-based boards
 * Compiles to less than 512 bytes
 * Tested with [Adafruit Feather 32u4](https://www.adafruit.com/products/2771)
@@ -20,34 +21,34 @@ The included `ubaboot.py` driver program can upload and verify firmware.
 
 You must configure ubaboot to work with your board. See `config.h`.
 
-1.  Install dependencies:
-    *  avr-gcc
-    *  avr-libc
-    *  make
-    *  avrdude
-    *  pyusb
-1.  Edit `config.h` to set required and optional configuration.
-1.  Build via `make`.
-1.  Set your fuses for a 512 byte bootloader.
-1.  Program your board via "make program". This uses `avrdude` to flash the
+1. Install dependencies:
+    * avr-gcc
+    * avr-libc
+    * make
+    * avrdude
+    * pyusb
+2. Edit `config.h` to set required and optional configuration.
+3. Build via `make`.
+4. Set your fuses for a 512 byte bootloader.
+5. Program your board via "make program". This uses `avrdude` to flash the
     firmware; set `AVRDUDE_PROGRAMMER` in the `Makefile` for your programmer.
-1.  Install a [udev
+6. Install a [udev
     rule](https://github.com/libusb/libusb/wiki/FAQ#can-i-run-libusb-applications-on-linux-without-root-privilege)
     so you can use your device without root privilege.
-1.  Use `ubaboot.py` to load programs via the bootloader.
+7. Use `ubaboot.py` to load programs via the bootloader.
 
 ### Configuration overview
 
 Required configuration:
 
-*   Set crystal/oscillator frequency for your board.
-*   Set low-speed mode if using the internal RC oscillator.
-*   Enable USB voltage regulator if needed for your board.
+* Set crystal/oscillator frequency for your board.
+* Set low-speed mode if using the internal RC oscillator.
+* Enable USB voltage regulator if needed for your board.
 
 Optional configuration:
 
-*   Setup registers and pin number for blinky USB activity LED.
-*   Customize vendor and product ID.
+* Setup registers and pin number for blinky USB activity LED.
+* Customize vendor and product ID.
 
 ## Protocol details
 
@@ -97,7 +98,7 @@ atmega32u4).
 Allow 20 ms timeout per page being programmed.
 
 ### Reboot
-  
+
 Reboots into the target program.
 
 SETUP field | Value
@@ -109,7 +110,7 @@ wIndex | ignored
 wLength | 0
 
 ### Read EEPROM
-  
+
 Reads EEPROM memory.
 
 SETUP field | Value
@@ -122,7 +123,7 @@ wLength | length to read
 
 ### Write EEPROM
 
-Writes EEPROM memory. 
+Writes EEPROM memory.
 
 SETUP field | Value
 ----------- | -----
