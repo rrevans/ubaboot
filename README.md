@@ -50,6 +50,25 @@ Optional configuration:
 * Setup registers and pin number for blinky USB activity LED.
 * Customize vendor and product ID.
 
+## Integration with Arduino/Teensyduino
+
+Since Ubaboot is designed for the same processor that the Teensy 2.0 boards have, it is possible to use the Teensyduino
+environment to program boards with Ubaboot. Unfortunately, that requires a manual step: to check where the `.hex`file
+has been stored and manually launch the `ubaboot.py` program.
+
+To solve this, `ubaboot.py` supports the `--gui` parameter, which waits until a board with ubaboot active is available
+in your system, showing a window while it is not available.
+
+To integrate it into your Arduino/Teensyduino IDE, just:
+
+1. open in your favourite editor the `hardware/teensy/avr/platform.txt` file
+2. go to the `Post build` section
+3. comment all the `recipe.hooks.postbuild` entries
+4. add the entry `recipe.hooks.postbuild.1.pattern="{teensytools.path}/ubaboot.py" --gui write "{build.path}/{build.project_name}.hex"`
+5. copy `ubaboot.py` into `hardware/tools`
+
+and your Arduino IDE will be ready to work with `ubaboot`. You will only need to choose a `teensy 2.0` board.
+
 ## Protocol details
 
 All operations are control transfers type vendor and recipient device.

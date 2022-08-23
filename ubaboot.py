@@ -20,6 +20,7 @@
 import usb.core
 import argparse
 from collections import namedtuple
+import sys
 
 # Default vendor/product id assigned by openmoko.
 DEFAULT_DEV = '1d50:611c'
@@ -40,6 +41,8 @@ def parse_args():
     parser = argparse.ArgumentParser(description='ubaboot demo client')
     parser.add_argument('--dev', type=vidpid, default=dev, metavar='VID:PID',
                         required=dev_required, help=dev_help)
+    parser.add_argument('--gui', action='store_const', const=True,
+                        default=False, help='Show a GUI')
     subparsers = parser.add_subparsers(title='loader commands',
                                        metavar='<command>')
     stat = subparsers.add_parser('stat', help='read signature/fuses')
@@ -173,13 +176,21 @@ class UbabootDevice(object):
             block += bytearray(b'\xff') * padding
             self.__dev_write(cmd, base+offset, 0, block)
 
+
 def main():
     args = parse_args()
 
     vid, pid = args.dev
     dev = usb.core.find(idVendor=vid, idProduct=pid)
     if not dev:
-        raise ValueError('cannot open ubaboot device')
+        if (args.gui):
+            gui = Gui(vid, pid)
+            gui.run()
+            if gui.cancelled:
+                raise ValueError('Cancelled')
+            dev = usb.core.find(idVendor=vid, idProduct=pid)
+        else:
+            raise ValueError('cannot open ubaboot device')
 
     ubaboot = UbabootDevice(dev)
 
@@ -226,6 +237,52 @@ def main():
     if args.mode in ('write', 'reboot') and args.reboot:
         ubaboot.reboot()
         print('Rebooting')
+
+class Gui:
+    def __init__(self, vid, pid):
+        # only import wxwidgets if needed
+        global wx
+        import wx
+
+        self._pid = pid
+        self._vid = vid
+        self._app = wx.App(False)
+        self.cancelled = True
+
+        self._name = f"SingleApp-{wx.GetUserId()}"
+        self._instance = wx.SingleInstanceChecker(self._name)
+
+        if self._instance.IsAnotherRunning():
+            wx.MessageBox("Another instance of UbaBoot is running", "ERROR")
+            sys.exit(0)
+        self._create_interface()
+
+    def _create_interface(self):
+        self._frame = wx.Frame(None, wx.ID_ANY, "UbaBOOT programmer")
+        mainSizer = wx.BoxSizer(wx.VERTICAL)
+        self._text = wx.StaticText(self._frame, id=wx.ID_ANY, label="Set your board in programming mode to continue.", style=wx.ALIGN_CENTER)
+        self._button_cancel = wx.Button(self._frame, id=wx.ID_ANY, label="Cancel", name="cancel")
+        mainSizer.Add(self._text, 0, wx.ALL, 25)
+        mainSizer.Add(self._button_cancel, 0, wx.ALL, 5)
+        self._frame.SetSizerAndFit(mainSizer)
+        self._frame.Show(True)
+        self._frame.Bind(wx.EVT_BUTTON, self.OnCancelButton, self._button_cancel)
+        self._timer = wx.Timer(self._frame)
+        self._frame.Bind(wx.EVT_TIMER, self.OnTimer, self._timer)
+        self._timer.Start(milliseconds=500, oneShot=wx.TIMER_CONTINUOUS)
+
+    def OnTimer(self, data):
+        dev = usb.core.find(idVendor=self._vid, idProduct=self._pid)
+        if dev is not None:
+            self.cancelled = False
+            self._frame.Close()
+
+    def OnCancelButton(self, data):
+        self._frame.Close()
+
+    def run(self):
+        self._app.MainLoop()
+
 
 if __name__ == '__main__':
     main()
