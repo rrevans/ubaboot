@@ -228,6 +228,7 @@ void help() {
     printf("    -r:                    if present, will retry once per second until the\n");
     printf("                           programming device is available.\n");
     printf("    -h:                    shows this help.\n");
+    printf("    -c:                    just return without error (useful to check that the binary exists).");
 }
 
 int main(int argc, char **argv) {
@@ -253,6 +254,8 @@ int main(int argc, char **argv) {
             break;
         case 'h':
             help();
+            return 0;
+        case 'c':
             return 0;
         default:
             help();
@@ -310,7 +313,7 @@ int main(int argc, char **argv) {
                                                  PRODUCT_ID);
         if (handle == NULL) {
             if (wait) {
-                fprintf(stderr, "Can't find the device. Retrying.\n");
+                fprintf(stderr, "Can't find Ubaboot. Please, press the RESET button in the device. Retrying.\n");
                 sleep(1);
             } else {
                 fprintf(stderr, "Can't find the device. Ensure that it's in programming mode.\n");
