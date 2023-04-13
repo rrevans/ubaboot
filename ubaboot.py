@@ -20,6 +20,7 @@
 import usb.core
 import argparse
 from collections import namedtuple
+import time
 
 # Default vendor/product id assigned by openmoko.
 DEFAULT_DEV = '1d50:611c'
@@ -40,6 +41,8 @@ def parse_args():
     parser = argparse.ArgumentParser(description='ubaboot demo client')
     parser.add_argument('--dev', type=vidpid, default=dev, metavar='VID:PID',
                         required=dev_required, help=dev_help)
+    parser.add_argument('--wait', action='store_const', const=True, default=False,
+                        help='Wait until the device is set in programming mode')
     subparsers = parser.add_subparsers(title='loader commands',
                                        metavar='<command>')
     stat = subparsers.add_parser('stat', help='read signature/fuses')
@@ -179,7 +182,15 @@ def main():
     vid, pid = args.dev
     dev = usb.core.find(idVendor=vid, idProduct=pid)
     if not dev:
-        raise ValueError('cannot open ubaboot device')
+        if (args.wait):
+            while True:
+                dev = usb.core.find(idVendor=vid, idProduct=pid)
+                if dev:
+                    break
+                print("Cannot open ubaboot device. Retrying...")
+                time.sleep(1)
+        else:
+            raise ValueError('cannot open ubaboot device')
 
     ubaboot = UbabootDevice(dev)
 
